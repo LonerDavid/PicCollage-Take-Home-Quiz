@@ -8,12 +8,8 @@
 import SwiftUI
 
 struct MainView: View {
-  private struct PlacedSticker: Identifiable {
-    let id = UUID()
-    let sticker: DefaultSticker
-  }
-
   @State private var placedStickers: [PlacedSticker] = []
+  @State private var isShowingDeleteAlert: Bool = false
 
   var body: some View {
     VStack {
@@ -37,30 +33,67 @@ struct MainView: View {
           .stroke(Color.primary.opacity(0.3), lineWidth: 1)
       )
       .padding(.horizontal)
-      .padding(.top)
-      .padding(.bottom, 8)
-      
+      .padding(.vertical, 8)
+
       HStack {
         Text("Stickers")
           .font(.headline)
         Spacer()
-        Text("Tap a sticker to place")
-          .padding(.horizontal, 10)
-          .padding(.vertical, 5)
-          .foregroundStyle(.white)
-          .font(.caption)
-          .fontWeight(.semibold)
-          .background(
-            Capsule()
-              .foregroundStyle(.accent)
-          )
+        if (placedStickers.isEmpty) {
+          Text("Tap a sticker to place")
+            .padding(.horizontal, 14)
+            .padding(.vertical, 5)
+            .foregroundStyle(.white)
+            .frame(maxWidth: 160,maxHeight: 25)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .background(
+              Capsule()
+                .foregroundStyle(.accent)
+            )
+        } else {
+          Button {
+            isShowingDeleteAlert = true
+          } label: {
+            HStack{
+              Image(systemName: "trash")
+              Text("Delete all stickers")
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .frame(maxWidth: 160,maxHeight: 25)
+            .foregroundStyle(.white)
+            .font(.caption)
+            .fontWeight(.semibold)
+            .background(
+              Capsule()
+                .foregroundStyle(.red)
+            )
+          }
+          .alert("Caution!", isPresented: $isShowingDeleteAlert) {
+            Button(role: .cancel) {} label: {
+              Text("Cancel")
+            }
+            Button(role: .destructive) {
+              placedStickers.removeAll()
+            } label: {
+              Text("Remove")
+            }
+          } message: {
+            Text("All stickers will be removed")
+          }
+        }
+
+
       }
       .padding(.horizontal)
       .padding(.bottom)
 
       ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 12) {
-          ForEach(Array(defaultStickers.enumerated()), id: \.offset) { _, sticker in
+          ForEach(Array(defaultStickers.enumerated()), id: \.offset) {
+            _,
+            sticker in
             Button {
               placedStickers.append(PlacedSticker(sticker: sticker))
             } label: {
@@ -71,7 +104,9 @@ struct MainView: View {
                 .padding(8)
                 .foregroundStyle(.accent)
                 .background(Color("DefaultSecondaryBackgroundColor"))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .clipShape(
+                  RoundedRectangle(cornerRadius: 10, style: .continuous)
+                )
             }
             .buttonStyle(.plain)
           }
@@ -84,6 +119,13 @@ struct MainView: View {
   }
 }
 
+extension MainView {
+  private struct PlacedSticker: Identifiable {
+    let id = UUID()
+    let sticker: DefaultSticker
+  }
+}
+
 #Preview {
-    MainView()
+  MainView()
 }

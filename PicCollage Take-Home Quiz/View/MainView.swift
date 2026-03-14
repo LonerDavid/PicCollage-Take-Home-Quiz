@@ -15,14 +15,7 @@ struct MainView: View {
     VStack {
       ZStack {
         ForEach(placedStickers) { placed in
-          Image(systemName: placed.sticker.SystemName)
-            .resizable()
-            .scaledToFit()
-            .frame(
-              width: placed.sticker.DefaultSize.width,
-              height: placed.sticker.DefaultSize.height
-            )
-            .foregroundStyle(placed.sticker.DefaultColor)
+          DraggableStickerView(placed: placed, placedStickers: $placedStickers)
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -70,7 +63,7 @@ struct MainView: View {
                 .foregroundStyle(.red)
             )
           }
-          .alert("Caution!", isPresented: $isShowingDeleteAlert) {
+          .alert("Warning!", isPresented: $isShowingDeleteAlert) {
             Button(role: .cancel) {} label: {
               Text("Cancel")
             }
@@ -95,7 +88,9 @@ struct MainView: View {
             _,
             sticker in
             Button {
-              placedStickers.append(PlacedSticker(sticker: sticker))
+              var stickerWithPosition = sticker
+              stickerWithPosition.position = CGPoint(x: 0, y: 0)
+              placedStickers.append(PlacedSticker(sticker: stickerWithPosition))
             } label: {
               Image(systemName: sticker.SystemName)
                 .resizable()
@@ -116,13 +111,6 @@ struct MainView: View {
       .frame(maxHeight: 70)
     }
     .background(Color("DefaultBackgroundColor"))
-  }
-}
-
-extension MainView {
-  private struct PlacedSticker: Identifiable {
-    let id = UUID()
-    let sticker: DefaultSticker
   }
 }
 

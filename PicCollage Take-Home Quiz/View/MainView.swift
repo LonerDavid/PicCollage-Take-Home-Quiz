@@ -10,12 +10,23 @@ import SwiftUI
 struct MainView: View {
   @State private var placedStickers: [PlacedSticker] = []
   @State private var isShowingDeleteAlert: Bool = false
+  @State private var selectedStickerID: UUID? = nil
 
   var body: some View {
     VStack {
       ZStack {
+        Color.clear
+          .contentShape(Rectangle())
+          .onTapGesture {
+            selectedStickerID = nil
+          }
+
         ForEach(placedStickers) { placed in
-          DraggableStickerView(placed: placed, placedStickers: $placedStickers)
+          DraggableStickerView(
+            placed: placed,
+            placedStickers: $placedStickers,
+            selectedStickerID: $selectedStickerID
+          )
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)

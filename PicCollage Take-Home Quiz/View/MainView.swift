@@ -36,8 +36,7 @@ struct MainView: View {
         RoundedRectangle(cornerRadius: 10, style: .continuous)
           .stroke(Color.primary.opacity(0.3), lineWidth: 1)
       )
-      .padding(.horizontal)
-      .padding(.vertical, 8)
+      .padding()
 
       HStack {
         Text("Stickers")
@@ -116,6 +115,19 @@ struct MainView: View {
             }
             .buttonStyle(.plain)
           }
+
+//          Button {
+//            // Add New Stickers (Features in the future)
+//
+//          } label: {
+//            Image(systemName: "plus.circle.dashed")
+//              .resizable()
+//              .scaledToFit()
+//              .frame(width: 40, height: 40)
+//              .padding(8)
+//              .foregroundStyle(.accent)
+//          }
+//          .buttonStyle(.borderless)
         }
         .padding(.horizontal)
       }

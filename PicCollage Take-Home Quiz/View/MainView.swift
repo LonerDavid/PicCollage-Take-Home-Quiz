@@ -10,19 +10,23 @@ import SwiftUI
 struct MainView: View {
   @State private var placedStickers: [PlacedSticker] = []
   @State private var isShowingDeleteAlert: Bool = false
+  @State private var selectedStickerID: UUID? = nil
 
   var body: some View {
     VStack {
       ZStack {
+        Color.clear
+          .contentShape(Rectangle())
+          .onTapGesture {
+            selectedStickerID = nil
+          }
+
         ForEach(placedStickers) { placed in
-          Image(systemName: placed.sticker.SystemName)
-            .resizable()
-            .scaledToFit()
-            .frame(
-              width: placed.sticker.DefaultSize.width,
-              height: placed.sticker.DefaultSize.height
-            )
-            .foregroundStyle(placed.sticker.DefaultColor)
+          DraggableStickerView(
+            placed: placed,
+            placedStickers: $placedStickers,
+            selectedStickerID: $selectedStickerID
+          )
         }
       }
       .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -32,8 +36,7 @@ struct MainView: View {
         RoundedRectangle(cornerRadius: 10, style: .continuous)
           .stroke(Color.primary.opacity(0.3), lineWidth: 1)
       )
-      .padding(.horizontal)
-      .padding(.vertical, 8)
+      .padding()
 
       HStack {
         Text("Stickers")
@@ -70,7 +73,7 @@ struct MainView: View {
                 .foregroundStyle(.red)
             )
           }
-          .alert("Caution!", isPresented: $isShowingDeleteAlert) {
+          .alert("Warning!", isPresented: $isShowingDeleteAlert) {
             Button(role: .cancel) {} label: {
               Text("Cancel")
             }
@@ -95,7 +98,9 @@ struct MainView: View {
             _,
             sticker in
             Button {
-              placedStickers.append(PlacedSticker(sticker: sticker))
+              var stickerWithPosition = sticker
+              stickerWithPosition.position = CGPoint(x: 0, y: 0)
+              placedStickers.append(PlacedSticker(sticker: stickerWithPosition))
             } label: {
               Image(systemName: sticker.SystemName)
                 .resizable()
@@ -110,19 +115,25 @@ struct MainView: View {
             }
             .buttonStyle(.plain)
           }
+
+//          Button {
+//            // Add New Stickers (Features in the future)
+//
+//          } label: {
+//            Image(systemName: "plus.circle.dashed")
+//              .resizable()
+//              .scaledToFit()
+//              .frame(width: 40, height: 40)
+//              .padding(8)
+//              .foregroundStyle(.accent)
+//          }
+//          .buttonStyle(.borderless)
         }
         .padding(.horizontal)
       }
       .frame(maxHeight: 70)
     }
     .background(Color("DefaultBackgroundColor"))
-  }
-}
-
-extension MainView {
-  private struct PlacedSticker: Identifiable {
-    let id = UUID()
-    let sticker: DefaultSticker
   }
 }
 

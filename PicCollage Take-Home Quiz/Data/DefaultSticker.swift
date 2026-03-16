@@ -11,6 +11,9 @@ struct DefaultSticker {
   var SystemName: String
   var DefaultColor: Color
   var DefaultSize: CGSize
+  var position: CGPoint = .zero
+  var rotationAngle: Angle = .zero
+  var scale: CGFloat = 1.0
 }
 
 let defaultStickers: [DefaultSticker] = [

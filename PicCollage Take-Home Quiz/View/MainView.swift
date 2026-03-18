@@ -86,8 +86,6 @@ struct MainView: View {
             Text("All stickers will be removed")
           }
         }
-
-
       }
       .padding(.horizontal)
       .padding(.bottom)

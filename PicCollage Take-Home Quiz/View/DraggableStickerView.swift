@@ -63,7 +63,7 @@ struct DraggableStickerView: View {
 
               Circle()
                 .fill(Color.blue)
-                .frame(width: 26, height: 26)
+                .frame(width: 23, height: 23)
                 .overlay(
                   Image(systemName: "arrow.up.right.and.arrow.down.left")
                     .resizable()
@@ -85,7 +85,7 @@ struct DraggableStickerView: View {
                   // }
                     .updating($scaleAmount) { value, state, _ in
                       guard isSelected else { return }
-                      let scaleDelta = 1.0 + (value.translation.height / 100.0)
+                      let scaleDelta = 1.0 + (value.translation.height / placed.sticker.DefaultSize.height)
                       state = max(minScale / placed.sticker.scale, min(maxScale / placed.sticker.scale, scaleDelta))
                     }
                     .onEnded { value in
@@ -93,7 +93,7 @@ struct DraggableStickerView: View {
                             let i = placedStickers.firstIndex(where: { $0.id == placed.id }) else { return }
                       // let rotationDelta = Angle(degrees: Double(value.translation.width) / 2.0)
                       // placedStickers[i].sticker.rotationAngle += rotationDelta
-                      let rawScaleDelta = 1.0 + (value.translation.height / 100.0)
+                      let rawScaleDelta = 1.0 + (value.translation.height / placed.sticker.DefaultSize.height)
                       let newScale = placedStickers[i].sticker.scale * rawScaleDelta
                       placedStickers[i].sticker.scale = min(maxScale, max(minScale, newScale))
                     }

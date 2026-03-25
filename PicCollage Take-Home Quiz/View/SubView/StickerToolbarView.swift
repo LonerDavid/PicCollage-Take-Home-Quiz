@@ -22,6 +22,25 @@ struct StickerToolbarView: View {
         Button {
           guard let id = selectedStickerID,
                 let idx = placedStickers.firstIndex(where: { $0.id == id }) else { return }
+
+          var duplicatedStickerModel = placedStickers[idx].sticker
+
+          duplicatedStickerModel.position.x += 20
+          duplicatedStickerModel.position.y += 20
+          let duplicatedPlacedSticker = PlacedSticker(sticker: duplicatedStickerModel)
+
+          placedStickers.append(duplicatedPlacedSticker)
+          selectedStickerID = duplicatedPlacedSticker.id
+        } label: {
+          Image(systemName: "plus.square.on.square").resizable()
+            .scaledToFit()
+            .foregroundStyle(.primary)
+            .padding(12)
+        }
+
+        Button {
+          guard let id = selectedStickerID,
+                let idx = placedStickers.firstIndex(where: { $0.id == id }) else { return }
           placedStickers.remove(at: idx)
           selectedStickerID = nil
         } label: {
@@ -29,14 +48,14 @@ struct StickerToolbarView: View {
             .resizable()
             .scaledToFit()
             .foregroundStyle(.red)
-            .padding(10)
+            .padding(12)
         }
         .buttonStyle(.plain)
       }
 
       Group {
         if #available(iOS 26.0, *) {
-          toolbar.glassEffect(.regular.interactive(), in: Capsule(style: .continuous))
+          toolbar.glassEffect(.regular, in: Capsule(style: .continuous))
         } else {
           toolbar
             .background(Material.bar)

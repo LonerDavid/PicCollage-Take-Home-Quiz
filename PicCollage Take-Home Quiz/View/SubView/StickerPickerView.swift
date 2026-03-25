@@ -32,22 +32,6 @@ struct StickerPickerView: View {
           }
           .buttonStyle(.plain)
         }
-
-//        Button {
-//          // Add Custom Sticker
-//        } label: {
-//          Image(systemName: "plus.circle.dashed")
-//            .resizable()
-//            .scaledToFit()
-//            .frame(width: 40, height: 40)
-//            .padding(8)
-//            .foregroundStyle(Color.accentColor)
-//            .background(Color("DefaultSecondaryBackgroundColor"))
-//            .clipShape(
-//              RoundedRectangle(cornerRadius: 10, style: .continuous)
-//            )
-//        }
-//        .buttonStyle(.borderless)
       }
       .padding(.horizontal)
     }

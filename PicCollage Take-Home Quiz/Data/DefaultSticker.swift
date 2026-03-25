@@ -10,6 +10,7 @@ import SwiftUI
 struct DefaultSticker {
   var SystemName: String
   var DefaultColor: Color
+  var selectedColor: Color? = nil
   var DefaultSize: CGSize
   var position: CGPoint = .zero
   var rotationAngle: Angle = .zero

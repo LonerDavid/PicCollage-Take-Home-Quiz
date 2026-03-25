@@ -73,5 +73,20 @@ struct StickerView: View {
 }
 
 #Preview {
-  MainView()
+  let sticker = DefaultSticker(
+    SystemName: "star.fill",
+    DefaultColor: .blue,
+    DefaultSize: CGSize(width: 100, height: 100)
+  )
+  let placed = PlacedSticker(sticker: sticker)
+
+  StickerView(
+    placed: placed,
+    placedStickers: .constant([placed]),
+    selectedStickerID: .constant(placed.id),
+    liveDragTranslation: .zero,
+    liveRotation: .zero,
+    liveMagnification: 1.0,
+    isCanvasTransforming: false
+  )
 }

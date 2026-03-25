@@ -37,7 +37,9 @@ struct MainView: View {
             selectedStickerID: $selectedStickerID,
             liveDragTranslation: selectedStickerID == placed.id ? canvasDragTranslation : .zero,
             liveRotation: selectedStickerID == placed.id ? canvasRotate : .zero,
-            liveMagnification: selectedStickerID == placed.id ? canvasMagnify : 1.0
+            liveMagnification: selectedStickerID == placed.id ? canvasMagnify : 1.0,
+            isCanvasTransforming: selectedStickerID == placed.id
+              && (canvasRotate != .zero || abs(canvasMagnify - 1.0) > 0.001)
           )
         }
 
@@ -57,8 +59,7 @@ struct MainView: View {
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(.red)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 10)
+                .padding(10)
             }
             .buttonStyle(.plain)
           }
@@ -66,7 +67,7 @@ struct MainView: View {
           Group {
             if #available(iOS 26.0, *) {
               stickerToolbar
-                .glassEffect(.regular.interactive(), in: Capsule(style: .continuous))
+                .glassEffect(in: Capsule(style: .continuous))
             } else {
               stickerToolbar
                 .background(Material.bar)
@@ -77,7 +78,7 @@ struct MainView: View {
                 .clipShape(Capsule())
             }
           }
-          .frame(maxWidth: 200, maxHeight: 40)
+          .frame(maxWidth: 200, maxHeight: 50)
           .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
           .padding()
         }
@@ -108,12 +109,14 @@ struct MainView: View {
         isEnabled: selectedStickerID != nil
       )
       .frame(maxWidth: .infinity, maxHeight: .infinity)
-      .background(Color("DefaultSecondaryBackgroundColor"))
-      .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-//      .overlay(
-//        RoundedRectangle(cornerRadius: 10, style: .continuous)
-//          .stroke(Color.primary.opacity(0.3), lineWidth: 1)
-//      )
+      .background(
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+          .fill(Color("DefaultSecondaryBackgroundColor"))
+      )
+      .overlay(
+        RoundedRectangle(cornerRadius: 20, style: .continuous)
+          .stroke(Color.primary.opacity(0.3), lineWidth: 1)
+      )
       .padding()
 
       //Indicator & Titles
@@ -170,7 +173,7 @@ struct MainView: View {
       .padding(.horizontal)
       .padding(.bottom)
 
-      //Sticker picker
+      //Sticker Picker
       ScrollView(.horizontal, showsIndicators: false) {
         HStack(spacing: 12) {
           ForEach(Array(defaultStickers.enumerated()), id: \.offset) {

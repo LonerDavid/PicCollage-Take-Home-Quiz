@@ -11,9 +11,12 @@ struct StickerView: View {
   let placed: PlacedSticker
   @Binding var placedStickers: [PlacedSticker]
   @Binding var selectedStickerID: UUID?
+  @GestureState private var dragOffset: CGSize = .zero
   var liveDragTranslation: CGSize = .zero
   var liveRotation: Angle = .zero
   var liveMagnification: CGFloat = 1.0
+  var isCanvasTransforming: Bool = false
+
 
   var body: some View {
     let isSelected = selectedStickerID == placed.id
@@ -39,12 +42,33 @@ struct StickerView: View {
     }
     .rotationEffect(placed.sticker.rotationAngle + liveRotation)
     .offset(
-      x: placed.sticker.position.x + liveDragTranslation.width,
-      y: placed.sticker.position.y + liveDragTranslation.height
+      x: placed.sticker.position.x + liveDragTranslation.width + dragOffset.width,
+      y: placed.sticker.position.y + liveDragTranslation.height + dragOffset.height
     )
     .onTapGesture {
       selectedStickerID = placed.id
     }
+    .gesture(
+      DragGesture(minimumDistance: 5)
+        .onChanged { _ in
+          // Gate sticker dragging during canvas rotate/magnify to avoid
+          // gesture competition where the sticker can appear to disappear.
+          if !isSelected || isCanvasTransforming { return }
+        }
+        .updating($dragOffset) { value, state, _ in
+          guard isSelected, !isCanvasTransforming else {
+            state = .zero
+            return
+          }
+          state = value.translation
+        }
+        .onEnded { value in
+          guard isSelected, !isCanvasTransforming else { return }
+          guard let i = placedStickers.firstIndex(where: { $0.id == placed.id }) else { return }
+          placedStickers[i].sticker.position.x += value.translation.width
+          placedStickers[i].sticker.position.y += value.translation.height
+        }
+    )
   }
 }
 
